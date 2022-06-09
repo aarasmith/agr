@@ -1,6 +1,6 @@
 # Armed Group Recognition
-Module for cleaning archive of video of the Syrian Conflict
-Intended to recognize armed group emblems in videos and classify accordingly
+- Module for cleaning video archive of the Syrian Conflict
+- Intended to recognize armed group emblems in videos and classify accordingly
 
 ###### Completed features:
 - Translates filenames into english
