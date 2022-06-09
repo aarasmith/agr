@@ -12,43 +12,10 @@ import html.parser as htmlparser
 
 load_dotenv()
 
-
-# assert project_id
-
-
 # trans_text = "_مشاهد من تحرير قرية الزارة النصيرية في ريف حمص الشمالي__.mp4"
 # trans_text = "Сирия. Джобар. Тяжелый день для танкистов. Часть 2  [filatov andrey]"
 # trans_text = "Que tal"
 
-    
-    
-# @dataclass
-# class GoogleTranslate:
-#     project_id: str = os.environ['GOOGLE_PROJECT_ID']
-#     target_language_code: str = "en"
-#     parent: str = f"projects/{project_id}"
-#     client: client = translate.TranslationServiceClient()
-    
-#     @classmethod
-#     def send_text(cls, text):
-        
-#         response = cls.client.translate_text(
-#             contents=[text],
-#             target_language_code=cls.target_language_code,
-#             parent=cls.parent,
-#             )
-#         return response
-    
-#     @classmethod
-#     def translate_text(cls, text):
-#         response = cls.send_text(text)
-#         parser = htmlparser.HTMLParser()
-#         return parser.unescape(response.translations[0].translated_text)
-    
-#     @classmethod
-#     def detect_language(cls, text):
-#         response = cls.send_text(text)
-#         return response.translations[0].detected_language_code
 
 @dataclass
 class GoogleTranslate:
