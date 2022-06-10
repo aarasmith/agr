@@ -65,8 +65,7 @@ class tag_and_train:
     
     @classmethod
     def tag_and_train(cls, folder_path, tag_id, tag_name, save_json = True):
-        credentials = ApiKeyCredentials(in_headers={"Training-key": cls._training_key})
-        trainer = CustomVisionTrainingClient(cls._cv_endpoint, credentials)
+        trainer = cls._init_trainer()
         
         image_regions = cls.tag_images(folder_path, tag_name, save_json)
         
@@ -89,5 +88,20 @@ class tag_and_train:
     def _save_region_json(cls, folder_path, tag_name, region_dict):
         with open(os.path.join(folder_path, tag_name + "_regions.json"), 'w') as outfile:
             json.dump(region_dict, outfile)
+            
+    @classmethod
+    def _init_trainer(cls):
+        credentials = ApiKeyCredentials(in_headers={"Training-key": cls._training_key})
+        return CustomVisionTrainingClient(cls._cv_endpoint, credentials)
+    
+    @classmethod
+    def create_tag(cls, tag_name):
+        trainer = cls._init_trainer()
+        return trainer.create_tag(cls._project_id, tag_name)
+    
+    @classmethod
+    def get_tags(cls):
+        trainer = cls._init_trainer()
+        trainer.get_tags(cls._project_id)
 
 
