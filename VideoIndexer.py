@@ -11,12 +11,13 @@ from dataclasses import dataclass
 import requests
 from time import sleep
 import json
+import os
 
 @dataclass
 class VideoIndexer:
-    subscription_key: str = subscription_key
-    account_id: str = account_id
-    location: str = location  # change this if you have a paid subscription tied to a specific location
+    subscription_key: str = os.environ['CV_SUBSCRIPTION_KEY']
+    account_id: str = os.environ['CV_ACCOUNT_ID']
+    location: str = os.environ['CV_LOCATION']  # change this if you have a paid subscription tied to a specific location
 
     @classmethod
     def get_access_token(cls):

@@ -52,7 +52,7 @@ class scene_frames:
     @classmethod
     def _set_destination(cls, filepath, basename, destination, sep_dir):
         if destination is None:
-            destination = os.path.join(filepath, basename)
+            destination = os.path.join(os.path.dirname(filepath), basename)
         elif sep_dir is True:
             destination = os.path.join(destination, basename)
         if not os.path.isdir(destination):

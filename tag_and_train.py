@@ -50,8 +50,9 @@ class tag_and_train:
         file_list = os.listdir(folder_path)
         region_dict = {}
         for file in file_list:
-            basename = os.path.splitext(os.path.basename(file))[0]
-            region_dict[basename] = cls._tag_image(os.path.join(folder_path, file))
+            if file.endswith(".jpg"):
+                basename = os.path.splitext(os.path.basename(file))[0]
+                region_dict[basename] = cls._tag_image(os.path.join(folder_path, file))
         
         filtered_region_dict = {}
         for (key, value) in region_dict.items():
@@ -102,6 +103,9 @@ class tag_and_train:
     @classmethod
     def get_tags(cls):
         trainer = cls._init_trainer()
-        trainer.get_tags(cls._project_id)
+        tags = trainer.get_tags(cls._project_id)
+        tag_dict = {tag.name: tag.id for tag in tags}
+        return tag_dict
+        
 
 
