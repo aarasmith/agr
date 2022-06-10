@@ -5,7 +5,7 @@ Created on Wed Jun  8 14:01:25 2022
 @author: andya
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import cv2
 from azure.cognitiveservices.vision.customvision.training import CustomVisionTrainingClient
 from azure.cognitiveservices.vision.customvision.training.models import ImageFileCreateBatch, ImageFileCreateEntry, Region
@@ -22,9 +22,9 @@ load_dotenv()
 @dataclass
 class tag_and_train:
     
-    _cv_endpoint: str = os.environ['CV_ENDPOINT']
-    _training_key: str = os.environ['CV_TRAIN_KEY']
-    _project_id: str = os.environ['CV_PROJECT_ID']
+    _cv_endpoint: str = field(default=os.environ['CV_ENDPOINT'], init=False, repr=False)
+    _training_key: str = field(default=os.environ['CV_TRAIN_KEY'], init=False, repr=False)
+    _project_id: str = field(default=os.environ['CV_PROJECT_ID'], init=False, repr=False)
     
     @classmethod
     def _tag_image(cls, filepath):
