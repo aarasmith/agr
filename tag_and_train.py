@@ -12,6 +12,7 @@ from azure.cognitiveservices.vision.customvision.training.models import ImageFil
 from msrest.authentication import ApiKeyCredentials
 import os
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -45,7 +46,7 @@ class tag_and_train:
         return [left, top, width, height]
     
     @classmethod
-    def tag_images(cls, folder_path):
+    def tag_images(cls, folder_path, tag_name, save_json = True):
         file_list = os.listdir(folder_path)
         region_dict = {}
         for file in file_list:
@@ -56,14 +57,18 @@ class tag_and_train:
         for (key, value) in region_dict.items():
             if sum(value) > 0:
                 filtered_region_dict[key] = value
+        
+        if save_json:
+            cls._save_region_json(folder_path, tag_name, filtered_region_dict)
+        
         return filtered_region_dict
     
     @classmethod
-    def load_tagged_images(cls, folder_path, tag_id):
+    def tag_and_train(cls, folder_path, tag_id, tag_name, save_json = True):
         credentials = ApiKeyCredentials(in_headers={"Training-key": cls._training_key})
         trainer = CustomVisionTrainingClient(cls._cv_endpoint, credentials)
         
-        image_regions = cls.tag_images(folder_path)
+        image_regions = cls.tag_images(folder_path, tag_name, save_json)
         
         tagged_images_with_regions = []
         for file_name in image_regions.keys():
@@ -79,6 +84,10 @@ class tag_and_train:
         for image in upload_result.images:
             print("Image status: ", image.status)
         return
-        
+    
+    @classmethod
+    def _save_region_json(cls, folder_path, tag_name, region_dict):
+        with open(os.path.join(folder_path, tag_name + "_regions.json"), 'w') as outfile:
+            json.dump(region_dict, outfile)
 
 
