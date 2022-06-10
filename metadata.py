@@ -15,7 +15,9 @@ from shutil import copy2
 class metadata:
     
     @classmethod
-    def write_metadata(cls, filepath, destination = os.getcwd(), keep_original = True):
+    def write_metadata(cls, filepath, destination = None, keep_original = True):
+        if not destination:
+            destination = os.path.dirname(filepath)
         vid_meta = MP4(filepath)
         basename = os.path.splitext(os.path.basename(filepath))[0]
         vid_meta['\xa9nam'] = basename
