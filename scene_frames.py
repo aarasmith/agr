@@ -58,7 +58,7 @@ class scene_frames:
         elif sep_dir is True:
             dest_path = os.path.join(dest_path, basename)
         if not os.path.isdir(dest_path):
-            os.mkdir(dest_path)
+            os.makedirs(dest_path)
         
         return dest_path
     
