@@ -15,22 +15,27 @@ from shutil import copy2
 class metadata:
     
     @classmethod
-    def write_metadata(cls, filepath, destination = None, keep_original = True):
-        if not destination:
-            destination = os.path.dirname(filepath)
-        vid_meta = MP4(filepath)
-        basename = os.path.splitext(os.path.basename(filepath))[0]
+    def write_metadata(cls, file_path, dest_path = None, keep_original = True):
+        if dest_path is None:
+            dest_path = os.path.dirname(file_path)
+        
+        vid_meta = MP4(file_path)
+        basename = os.path.splitext(os.path.basename(file_path))[0]
         vid_meta['\xa9nam'] = basename
-        translation = gt.translate(basename)
         name_en = basename
+        
+        translation = gt.translate(basename)        
         if translation.language != "en":
             vid_meta['\xa9cmt'] = translation.translation
             name_en = translation.translation
-        vid_meta.save()
-        unique_name = uuid.uuid4().hex
-        if keep_original:
-            copy2(filepath, os.path.join(destination, unique_name + ".mp4"))
-        else:
-            os.rename(filepath, os.path.join(destination, unique_name + ".mp4"))
         
-        return {"original_title": [basename], "filename": [unique_name], "title_en": [name_en]}
+        vid_meta.save()
+        
+        unique_name = uuid.uuid4().hex
+        destination = os.path.join(dest_path, unique_name + ".mp4")
+        if keep_original:
+            copy2(file_path, destination)
+        else:
+            os.rename(file_path, destination)
+        
+        return [destination, unique_name, basename, name_en]
