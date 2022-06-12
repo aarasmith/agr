@@ -5,7 +5,7 @@ Created on Sat Jun 11 10:59:02 2022
 @author: andya
 """
 #data structure filename - original_collection - original_title - title_en - \title_ar - year - date - group/s - adm1 - adm2 - adm3 - adm4 - place_name - training_data - is_indexed - vi_id - insights
-from metadata import metadata as md
+import metadata as md
 from scene_frames import scene_frames as sf
 from translate import GoogleTranslate as gt
 from tag_and_train import tag_and_train as tnt
