@@ -12,7 +12,7 @@ CREATE TABLE videos (
     
     date TEXT,
     
-    armed_group TEXT,
+    armed_groups TEXT,
     
     adm1 TEXT,
     
