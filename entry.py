@@ -14,6 +14,7 @@ import os
 import pandas as pd
 from db import get_connection
 from dataclasses import dataclass, field, asdict
+from CustomVision import CustomVision as cv
 
 @dataclass
 class entry:
@@ -25,7 +26,7 @@ class entry:
     title_en: str = None
     year: int = None
     date: str = None
-    armed_group: list = field(default_factory=lambda: [None])
+    armed_groups: list = field(default_factory=lambda: [None])
     adm1: str = None
     adm2: str = None
     adm3: str = None
@@ -35,6 +36,7 @@ class entry:
     is_indexed: bool = False
     vi_id: str = None
     insights: str = None
+    pred_results: dict = field(default_factory=lambda: {})
     
     
     
@@ -46,10 +48,12 @@ class entry:
         
     def tag_and_train(self, save_json = True):
         tags = tnt.get_tags()
-        for ag in self.armed_group:
+        for ag in self.armed_groups:
             if ag not in tags.keys():
                 tag_id = tnt.create_tag(ag).id
             else:
                 tag_id = tags[ag]
             tnt.tag_and_train(self.train_path, tag_id, tag_name = ag)
 
+    def preds_from_local(self):
+        self.armed_groups, self.pred_results = cv.preds_from_local(self.file_path)

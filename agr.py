@@ -13,6 +13,7 @@ from syno_fs import syno_fs as fs
 import os
 import pandas as pd
 from db import get_connection
+from entry import entry
 
 
 source_folder = "D:/Additional Videos/Reddit fix/"
@@ -47,7 +48,7 @@ con = get_connection("agr_db.sqlite")
 entries.set_index('file_name').to_sql("videos", con, if_exists="append")
 
 
-pd.DataFrame([asdict(x)])
+#pd.DataFrame([asdict(x)])
 
 
 
@@ -56,9 +57,11 @@ file_list = fs.list_files("/Main/Visual/Video projects/Conflict Videos/Syria/Syr
 file_path = file_list['data']['files'][0]['path']
 file_path = fs.download_file(file_path, dest_path = "D:/agr/test")
 
-vid = entry(file_path, original_collection = "syria_doc_war", armed_group = ["mountain_hawks", "fatah_halab"])
+vid = entry(file_path, original_collection = "syria_doc_war", armed_groups = ["mountain_hawks", "fatah_halab"])
 vid.write_metadata(keep_original = False)
 vid.get_scene_frames()
-vid.tag_and_train()
+vid.tag_and_train(dest_path = "D:/agr/test/training")
 
-#dest_path = "D:/agr/test/training"
+vid = entry(file_path, original_collection = "syria_doc_war")
+vid.write_metadata(keep_original = False)
+vid.preds_from_local()

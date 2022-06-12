@@ -12,6 +12,8 @@ import io
 import os
 from video_indexer import VideoIndexer
 from dotenv import load_dotenv
+from scene_frames import scene_frames as sf
+import cv2
 
 load_dotenv()
 
@@ -91,6 +93,39 @@ class CustomVision:
             else:
                for brand in predictions:
                    print("'{}' brand detected with confidence {:.1f}% at location {}, {}, {}, {}".format( brand.tag_name, brand.probability * 100, brand.bounding_box.left, brand.bounding_box.top, brand.bounding_box.width, brand.bounding_box.height))
+    
+    @classmethod
+    def preds_from_local(cls, file_path):
+        prediction_credentials = ApiKeyCredentials(in_headers={"Prediction-key": cls._predictor_key})
+        predictor = CustomVisionPredictionClient(cls._predictor_endpoint, prediction_credentials)
+        
+        prediction_threshold = .1
+        timeout_interval, timeout_time = 5, 10.0
+        
+        frame_list = sf.get_scene_frames(file_path, save = False)
+        groups = []
+        results = []
+        cap = cv2.VideoCapture(file_path)
+        for index, frame_no in enumerate(frame_list):
+            if index % timeout_interval == 0:
+               print("Trying to prevent exceeding request limit waiting {} seconds".format(timeout_time))
+               time.sleep(timeout_time)
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
+            ret, frame = cap.read()
+            img_str = cv2.imencode('.jpg', frame)[1].tostring()
+            img_stream = io.BytesIO(img_str)
+            cv_results = predictor.detect_image(cls._project_id, cls._published_name, img_stream)
+            predictions = [pred for pred in cv_results.predictions if pred.probability > prediction_threshold]
+            print("Detecting groups in keyframe {}: ".format(frame_no))
+        
+            if len(predictions) == 0:
+               print("No groups detected.")
+            else:
+               for pred in predictions:
+                   groups += [pred.tag_name]
+                   results += {"group": pred.tag_name, "frame_no": frame_no, "location": [pred.bounding_box.left, pred.bounding_box.top, pred.bounding_box.width, pred.bounding_box.height]}
+        cap.release()
+        return list(set(groups)), results
 
 
 #computervision_client = ComputerVisionClient(cv_endpoint, CognitiveServicesCredentials(subscription_key))

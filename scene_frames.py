@@ -17,7 +17,7 @@ import subprocess
 class scene_frames:
     
     @classmethod
-    def get_scene_frames(cls, file_path, dest_path = None, sep_dir = True):
+    def get_scene_frames(cls, file_path, dest_path = None, sep_dir = True, save = True):
         
         basename = os.path.splitext(os.path.basename(file_path))[0]        
         dest_path = cls._set_dest_path(file_path, basename, dest_path, sep_dir)
@@ -25,9 +25,11 @@ class scene_frames:
         scene_list = detect(file_path, ContentDetector())
         frame_list = [i[0].get_frames() for i in scene_list]
         
-        cls._save_frames(file_path, dest_path, basename, frame_list)
-        
-        return dest_path
+        if save:
+            cls._save_frames(file_path, dest_path, basename, frame_list)        
+            return dest_path
+        else:
+            return frame_list
     
     @classmethod
     def get_i_frames(cls, file_path, dest_path = None, sep_dir = True):
