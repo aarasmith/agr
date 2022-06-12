@@ -30,5 +30,7 @@ CREATE TABLE videos (
     
     vi_id TEXT,
     
-    insights TEXT
+    insights TEXT,
+    
+    pred_results TEXT
 );
