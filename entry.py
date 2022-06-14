@@ -15,6 +15,7 @@ import pandas as pd
 from db import get_connection
 from dataclasses import dataclass, field, asdict
 from CustomVision import CustomVision as cv
+import json
 
 @dataclass
 class entry:
@@ -49,11 +50,20 @@ class entry:
     def tag_and_train(self, save_json = True):
         tags = tnt.get_tags()
         for ag in self.armed_groups:
+            print(ag)
             if ag not in tags.keys():
                 tag_id = tnt.create_tag(ag).id
             else:
                 tag_id = tags[ag]
             tnt.tag_and_train(self.train_path, tag_id, tag_name = ag)
+        self.is_training = True
 
     def preds_from_local(self):
         self.armed_groups, self.pred_results = cv.preds_from_local(self.file_path)
+        
+    def finish(self):
+        df = pd.DataFrame([asdict(self)]).set_index('file_name')
+        df['pred_results'] = str(json.dumps(df['pred_results'].iloc[0]))
+        df['armed_groups'] = str(json.dumps(df['armed_groups'].iloc[0]))
+        with get_connection("agr_db.sqlite") as con:
+            df.to_sql("videos", con, if_exists="append")

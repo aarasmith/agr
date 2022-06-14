@@ -5,11 +5,11 @@ Created on Sat May 28 13:51:19 2022
 @author: andya
 """
 
-from metadata import metadata as md
+import metadata as md
 from scene_frames import scene_frames as sf
 from translate import GoogleTranslate as gt
 from tag_and_train import tag_and_train as tnt
-from syno_fs import syno_fs as fs
+from syno_fs import syno_fs
 import os
 import pandas as pd
 from db import get_connection
@@ -52,16 +52,19 @@ entries.set_index('file_name').to_sql("videos", con, if_exists="append")
 
 
 
-
+fs = syno_fs()
 file_list = fs.list_files("/Main/Visual/Video projects/Conflict Videos/Syria/Syria Addendum/Doc War Syria Addendum")
 file_path = file_list['data']['files'][0]['path']
 file_path = fs.download_file(file_path, dest_path = "D:/agr/test")
 
 vid = entry(file_path, original_collection = "syria_doc_war", armed_groups = ["mountain_hawks", "fatah_halab"])
 vid.write_metadata(keep_original = False)
-vid.get_scene_frames()
-vid.tag_and_train(dest_path = "D:/agr/test/training")
+vid.get_scene_frames(dest_path = "D:/agr/test/training")
+vid.tag_and_train()
+vid.finish()
 
 vid = entry(file_path, original_collection = "syria_doc_war")
 vid.write_metadata(keep_original = False)
 vid.preds_from_local()
+
+#dest_path = "D:/agr/test/training"

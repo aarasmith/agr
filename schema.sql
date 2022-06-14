@@ -2,6 +2,10 @@ CREATE TABLE videos (
 
     file_name TEXT PRIMARY KEY NOT NULL,
     
+    file_path TEXT,
+    
+    train_path TEXT,
+    
     original_collection TEXT,
     
     original_title TEXT,
